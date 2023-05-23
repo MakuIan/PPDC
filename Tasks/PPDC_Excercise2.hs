@@ -1,3 +1,8 @@
+{-
+--Name: Mark Ian Braun
+--Martikelnummer: 8175858
+Group: 04
+-}
 import Data.List
 import Data.Ord
 
@@ -16,11 +21,15 @@ data GameState = GameState {move :: [Move], hCards :: [Card], cardList:: [Card],
 
 -- Task 1
 --1
+--input: cardColor (Card Hearts Jack)
+--output: Red  
 cardColor :: Card -> Color
 cardColor (Card {suit = s, rank = _}) = 
     if (s==Hearts || s == Diamonds) then Red else Black
 
 --2
+--input: cardValue (Card Hearts Jack)
+--output: 10
 cardValue :: Card -> Int
 cardValue (Card {suit = _, rank = r}) 
     |r == Num 2 = 2
@@ -39,6 +48,8 @@ cardValue (Card {suit = _, rank = r})
     |otherwise = error "NOT AVAILABLE"
 
 --4
+--input: convertSuit 'c'
+--output Clubs
 convertSuit :: Char -> Suit
 convertSuit c
     |c =='d'||c== 'D' = Diamonds 
@@ -48,6 +59,8 @@ convertSuit c
     | otherwise = error "no corresponding Suit found"
 
 --5
+--input: convertRank '2'
+--output: Num 2
 convertRank :: Char -> Rank
 convertRank r
     |r == '1' = Ace
@@ -66,10 +79,16 @@ convertRank r
     |otherwise = error "no corresponding Rank found"
 
 --6
+--convertCard 'd' '1'
+--output: Card {suit = Diamonds, rank = Ace}
 convertCard :: Char -> Char -> Card
 convertCard s r = Card {suit = (convertSuit s), rank = (convertRank r)}
 
 --7
+--convertMove 'd' 'd' '1'
+--Draw
+--convertMove 'r' 'd' '1'
+--Discard (Card {suit = Diamonds, rank = Ace})
 convertMove :: Char -> Char -> Char -> Move
 convertMove m s r = 
         if (m == 'd' || m == 'D') 
@@ -79,13 +98,17 @@ convertMove m s r =
                         else error "wrong move"
 
 --8
+--removeCard [(Card Hearts Jack), (Card Spades Ace), (Card Hearts Jack)] (Card Hearts Jack)
+--[Card {suit = Spades, rank = Ace},Card {suit = Hearts, rank = Jack}]
 removeCard :: [Card] -> Card -> [Card]
 removeCard cs c = if c `elem` cs then (delete c cs) else error "not in list"
---input: removeCard ([(Card{suit = Spades, rank =Num 10}), (Card{suit = Hearts, rank = Num 9}), (Card{suit = Spades, rank =Num 10})]) ( Card{suit = Spades, rank = Num 10})
---or: removeCard ([(userCard Spades (Num 10)), (userCard Hearts (Num 9)), (userCard Spades (Num 10))]) (userCard Spades (Num 10))
---output: [Card {suit = Hearts, rank = Num 9},Card {suit = Spades, rank = Num 10}]
+
 
 --9
+--allSameColor [(Card Hearts Jack), (Card Spades Ace), (Card Diamonds Jack)]
+--False
+--allSameColor [(Card Hearts Jack), (Card Diamonds Jack)]                   
+--True
 allSameColor :: [Card] -> Bool
 allSameColor [] = error "empty List" 
 allSameColor [_] = True
@@ -112,6 +135,8 @@ allSameColor' (x:y:xs) =
      else False
 
 --10
+--sumCards [(Card Hearts Jack), (Card Diamonds Jack)]
+--20
 sumCards :: [Card] -> Int
 sumCards xs = sum (helperList xs)
     where 
@@ -119,6 +144,8 @@ sumCards xs = sum (helperList xs)
         helperList (x:xs) = cardValue x : helperList xs
 
 --11
+--score [(Card Hearts Jack), (Card Diamonds Jack)] 40
+--10
 score :: [Card] -> Int -> Int
 score xs g = 
     let preliminarySum =  if ((sumCards xs) > g )
