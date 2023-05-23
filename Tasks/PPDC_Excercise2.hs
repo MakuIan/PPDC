@@ -87,7 +87,7 @@ removeCard cs c = if c `elem` cs then (delete c cs) else error "not in list"
 
 --9
 allSameColor :: [Card] -> Bool
-allSameColor [] = error "empty Held Cards List" --error for the runGame function
+allSameColor [] = error "empty List" 
 allSameColor [_] = True
 allSameColor [x,y] = 
      if (cardColor x == cardColor y)
@@ -96,6 +96,19 @@ allSameColor [x,y] =
 allSameColor (x:y:xs) = 
     if (cardColor x == cardColor y) 
         then allSameColor (y:xs)
+     else False
+
+--for runGame
+allSameColor' :: [Card] -> Bool
+allSameColor' [] = error "empty Held Cards List" --error for the runGame function
+allSameColor' [_] = True
+allSameColor' [x,y] = 
+     if (cardColor x == cardColor y)
+         then True 
+     else False
+allSameColor' (x:y:xs) = 
+    if (cardColor x == cardColor y) 
+        then allSameColor' (y:xs)
      else False
 
 --10
