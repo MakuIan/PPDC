@@ -137,11 +137,13 @@ allSameColor' (x:y:xs) =
 --10
 --sumCards [(Card Hearts Jack), (Card Diamonds Jack)]
 --20
+--not tail recursive solution
 sumCards :: [Card] -> Int
 sumCards xs = sum (helperList xs)
     where 
         helperList [] = []
-        helperList (x:xs) = cardValue x : helperList xs
+        helperList (x:xs) = cardValue x : helperList xs 
+--tail recursive solution
 
 --11
 --score [(Card Hearts Jack), (Card Diamonds Jack)] 40
@@ -155,7 +157,16 @@ score xs g =
        if ((allSameColor xs) == True) 
             then preliminarySum `div` 2
        else preliminarySum
-
+--for runGame
+score' :: [Card] -> Int -> Int
+score' xs g = 
+    let preliminarySum =  if ((sumCards xs) > g )
+                            then 3 * (sumCards xs - g)
+                          else g - sumCards xs
+    in
+       if ((allSameColor' xs) == True) 
+            then preliminarySum `div` 2
+       else preliminarySum
 --12 
 runGame :: [Card] -> [Move] -> Int -> Int
 runGame (c:cs) ms g  = userscore $ helperprocessMoves start ms
@@ -172,19 +183,19 @@ runGame (c:cs) ms g  = userscore $ helperprocessMoves start ms
                     if c `elem` hCards gstate
                         then let 
                             newHlist = removeCard (hCards gstate) c
-                            updatedState = gstate {hCards = newHlist, userscore = score newHlist g}
+                            updatedState = gstate {hCards = newHlist, userscore = score' newHlist g}
                         in updatedState
                         
                         else error "Card not found in List"
                 
                 Draw ->
                     if ((userscore gstate) > g || null (cardList gstate)) then 
-                        let finalscore = score (hCards gstate) g
+                        let finalscore = score' (hCards gstate) g
                         in gstate {userscore = finalscore}
                     else 
                         let drawnCard = head (cardList gstate)
                             newHlist = drawnCard : hCards gstate
-                            updatedState = gstate {hCards = newHlist, cardList = tail (cardList gstate), userscore = score newHlist g}
+                            updatedState = gstate {hCards = newHlist, cardList = tail (cardList gstate), userscore = score' newHlist g}
                         in updatedState
                         --gstate {move = ms, hCards = [head (cardList gstate)] ++ hCards gstate, cardList = tail (cardList gstate),  userscore = userscore gstate  + 1 }
 -- runGame([(Card{suit = Spades, rank =Num 10}), (Card{suit = Hearts, rank = Num 9}), (Card{suit = Spades, rank =Num 10})]) [Draw,Draw] g 
