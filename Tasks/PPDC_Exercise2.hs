@@ -102,8 +102,10 @@ convertMove m s r =
 --[Card {suit = Spades, rank = Ace},Card {suit = Hearts, rank = Jack}]
 removeCard :: [Card] -> Card -> [Card]
 removeCard cs c = if c `elem` cs then (delete c cs) else error "not in list"
-
-
+--non delete version
+removeCard' :: [Card] -> Card -> [Card]
+removeCard' [] _ = error "empty list"
+removeCard' (x:xs) c = if x == c then xs else x : removeCard' xs c
 --9
 --allSameColor [(Card Hearts Jack), (Card Spades Ace), (Card Diamonds Jack)]
 --False
@@ -144,6 +146,11 @@ sumCards xs = sum (helperList xs)
         helperList [] = []
         helperList (x:xs) = cardValue x : helperList xs 
 --tail recursive solution
+sumCards' :: [Card] -> Int
+sumCards' cs = sumCards'' cs 0
+    where
+        sumCards'' [] acc = acc
+        sumCards'' (x:xs) acc = sumCards'' xs (acc + cardValue x)
 
 --11
 --score [(Card Hearts Jack), (Card Diamonds Jack)] 40
