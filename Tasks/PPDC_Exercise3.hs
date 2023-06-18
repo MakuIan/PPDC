@@ -30,9 +30,11 @@ type CharCountDictionary = [(CharCount, Sentence)]
 wordCharCounts :: Word -> CharCount
 wordCharCounts cs = zip chars (repetition chars)
     where
-        chars = sort $ nub lower
+        chars = sort $ nub lower --chars = "eghot"
         lower  = map toLower cs
-        repetition  = map (\c -> length (filter (/=c) lower))
+        --"/= checks for unqeual elements not equal"
+        repetition  = map (\c -> length (filter (==c) lower)) 
+lower cs  = map toLower cs
 
 -- This function has an error, you should fix and report it
 -- For a given sentence it should return a list of all possible char counts
@@ -44,20 +46,21 @@ sentenceCharCounts = wordCharCounts . concat . map reverse
 -- For a given sentece it should return a word dictionary
 -- For example dictCharCounts ["you","love"]  -> [("you",[('o',1),('u',1),('y',1)]),("love",[('e',1),('l',1),('o',1),('v',1)])]
 dictCharCounts :: Sentence -> WordDictionary
-dictCharCounts (s:sx) = zip sx (map wordCharCounts sx)
+dictCharCounts (sx) = zip sx (map wordCharCounts sx)
 
 -- This function has errors, you should fix and report it
 -- For example dictWordsByCharCounts [("vole",[('e',1),('l',1),('o',1),('v',1)]),("you",[('o',1),('u',1),('y',1)]),("love",[('e',1),('l',1),('o',1),('v',1)])]
 -- should give output of [([('e',1),('l',1),('o',1),('v',1)],["love","vole"]),([('o',1),('u',1),('y',1)],["you"])]
 dictWordsByCharCounts :: WordDictionary -> CharCountDictionary
-dictWordsByCharCounts = toList . fromListWith (++) . map (\(w,cc) -> (cc, [w]))
+dictWordsByCharCounts = toList . fromListWith (++) . concatMap  (\(w,c) -> [(c, [w])])
+--dictWordsByCharCounts = toList . fromListWith (++) . map (\(w,cc) -> (cc, [w]))
 
 -- This function has errors, you should fix and report it
 -- For example wordAnagrams "velo" [([('e',1),('l',1),('o',1),('v',1)],["love","vole"]),([('o',1),('u',1),('y',1)],["you"])]
 -- should give output of ["love","vole"]
 wordAnagrams :: Word -> CharCountDictionary -> Sentence
-wordAnagrams w ccds = concat $ map snd (filter (\x -> fst x /= (wordCharCounts  w)) (tail ccds))
-
+wordAnagrams w ccds = concat $ map snd (filter (\x -> fst x == (wordCharCounts  w)) (ccds))
+    
 -- This function has an error, you should fix and report it
 -- For example  charCountsSubsets [('e',1),('t',1),('a',1)]
 -- should give output of [[('a',1),('e',1),('t',1)],[('e',1),('t',1)],[('a',1),('e',1)],[('e',1)],[('a',1),('t',1)],[('t',1)],[('a',1)],[]]
@@ -66,15 +69,15 @@ charCountsSubsets = map wordCharCounts . nub . powerset  . ccToWord
     where
         powerset  :: Word -> [Word]
         powerset  [] = [[]]
-        powerset  (c:cs) = [c:cs' | cs' <- powerset  cs] ++ powerset [c]
-        ccToWord :: CharCount -> Word 
-        ccToWord cc = concat [replicate (min n 1) c | (c,n) <- cc]
+        powerset (c:cs) = [c:cs' | cs' <- powerset cs] ++ powerset cs
+        ccToWord :: CharCount -> Word   
+        ccToWord cc = concat [replicate n c | (c,n) <- cc]
 
 -- This function has errors, you should fix and report it
 -- For example subtractCounts [('e',1),('l',1),('o',1),('v',1)] [('e',2),('g',1),('h',1),('o',1),('t',1)] 
 -- should give output of [('g',1),('h',1),('l',1),('t',1),('v',1)]
 subtractCounts :: CharCount -> CharCount -> CharCount
-subtractCounts cc1 cc2 = filter (\x -> snd x /= 0) $ toList $ fromListWith (+) (cc2 ++ cc1)
+subtractCounts cc1 cc2 = filter (\x -> snd x > 0) $ toList $ fromListWith (-) (cc2 ++ cc1)
 
 -- This function has no error, you don't need to change it
 -- You can use this function to test your code with small sentences
