@@ -1,3 +1,8 @@
+{-
+--Name: Mark Ian Braun
+--Martikelnummer: 8175858
+Group: 04
+-}
 import Data.List (mapAccumL)
 
 data Direction = North | South | East | West

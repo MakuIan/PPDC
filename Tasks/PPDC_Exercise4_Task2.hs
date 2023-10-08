@@ -1,3 +1,8 @@
+{-
+--Name: Mark Ian Braun
+--Martikelnummer: 8175858
+Group: 04
+-}
 -- Code to build upon for the exercise
 data Point = Point Int Int 
 data Line = Line Point Point
@@ -85,10 +90,11 @@ points [] _ = []
 points (p:ps) r = (point p r) : (points ps r) 
 point :: Point -> Double -> Point
 point p r = rotatePoint p r
+
 rotateShape :: Shape -> Double -> Shape
 rotateShape (SPoint p) r = SPoint (rotatePoint p r)
 rotateShape (SLine (Line p1 p2)) r = SLine (Line (rotatePoint p1 r) (rotatePoint p2 r))
 rotateShape (SCurve (Curve ps)) r = SCurve (Curve $ points ps r) 
 rotateShape (SCircle (Circle c ra)) r = SCircle (Circle (rotatePoint c r) ra)  
-rotateShape (SPolygon (Polygon ps)) r = SPolygon (Polygon (points pPs r))
+rotateShape (SPolygon (Polygon ps)) r = SPolygon (Polygon (points ps r))
 rotateShape (SEllipse (Ellipse p1 p2)) r = SEllipse (Ellipse (rotatePoint p1 r) (rotatePoint p2 r))
